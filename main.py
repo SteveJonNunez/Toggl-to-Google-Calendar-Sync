@@ -14,6 +14,7 @@ GOOGLE_CALENDAR_ID = os.getenv('GOOGLE_CALENDAR_ID')
 
 TOGGL_USER_NAME = os.getenv('TOGGL_USER_NAME')
 TOGGL_PASSWORD = os.getenv('TOGGL_PASSWORD')
+TOGGL_WORKSPACE_ID = os.getenv('TOGGL_WORKSPACE_ID')
 
 REDIS_HOST = os.getenv('REDIS_HOST')
 REDIS_PORT = os.getenv('REDIS_PORT')
@@ -131,7 +132,20 @@ def sync_toggl_to_google_calendar():
             insertedGoogleEvent = insert_google_calendar_record(summary, clientName, startTime, endTime)
             insert_sync_record(togglId, insertedGoogleEvent['id'])
     update_last_sync_time()
-
+    
+def get_all_toggl_day_events():
+    data = requests.get(f'https://api.track.toggl.com/api/v9/me/time_entries?start_date=2024-01-29&end_date=2024-01-30&meta=true', headers={'content-type': 'application/json', 'Authorization' : f'Basic {b64encode(bytes(f'{TOGGL_USER_NAME}:{TOGGL_PASSWORD}', 'utf-8')).decode('ascii')}'})
+    for record in data.json():
+        togglId = record.get("id", "")
+        clientName = record.get("client_name", "")
+        projectName = record.get("project_name", "")
+        description = record.get("description", "")
+        startTime = record.get("start", "")
+        endTime = record.get("stop", "")
+        serverDeletedAt = record.get("server_deleted_at", "")
+        workspace_id = record.get("workspace_id", "")
+        
+        print(f'{togglId}, {clientName}, {projectName}, {description}, {startTime}, {endTime}, {serverDeletedAt}, {workspace_id}, ')
 
 #####################################################################
-sync_toggl_to_google_calendar()
+get_all_toggl_day_events()
