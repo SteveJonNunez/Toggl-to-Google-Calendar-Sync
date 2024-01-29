@@ -133,8 +133,12 @@ def sync_toggl_to_google_calendar():
             insert_sync_record(togglId, insertedGoogleEvent['id'])
     update_last_sync_time()
     
-def get_all_toggl_day_events():
-    data = requests.get(f'https://api.track.toggl.com/api/v9/me/time_entries?start_date=2024-01-29&end_date=2024-01-30&meta=true', headers={'content-type': 'application/json', 'Authorization' : f'Basic {b64encode(bytes(f'{TOGGL_USER_NAME}:{TOGGL_PASSWORD}', 'utf-8')).decode('ascii')}'})
+def get_all_toggl_day_events(day_delta):
+    start_date = (datetime.now() + timedelta(days=day_delta))
+    start_date_string = start_date.strftime("%Y-%m-%d")
+    end_date_string = (start_date + timedelta(days=1)).strftime("%Y-%m-%d")
+    
+    data = requests.get(f'https://api.track.toggl.com/api/v9/me/time_entries?start_date={start_date_string}&end_date={end_date_string}&meta=true', headers={'content-type': 'application/json', 'Authorization' : f'Basic {b64encode(bytes(f'{TOGGL_USER_NAME}:{TOGGL_PASSWORD}', 'utf-8')).decode('ascii')}'})
     for record in data.json():
         togglId = record.get("id", "")
         clientName = record.get("client_name", "")
@@ -148,4 +152,4 @@ def get_all_toggl_day_events():
         print(f'{togglId}, {clientName}, {projectName}, {description}, {startTime}, {endTime}, {serverDeletedAt}, {workspace_id}, ')
 
 #####################################################################
-get_all_toggl_day_events()
+get_all_toggl_day_events(-1)
