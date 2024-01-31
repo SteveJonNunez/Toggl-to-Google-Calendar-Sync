@@ -154,6 +154,8 @@ def sync_toggl_to_google_calendar():
         elif (serverDeletedAt is None or len(serverDeletedAt) <= 0):
             insertedGoogleEvent = insert_google_calendar_record(summary, clientName, startTime, endTime)
             insert_sync_record(togglId, insertedGoogleEvent['id'])
+        else:
+            print(f'Failed to delete. serverDeletedAt is not None= {serverDeletedAt is not None} and len(serverDeletedAt) > 0 = {len(serverDeletedAt) > 0} ')
     update_last_sync_time()
     
 def get_all_toggl_events_for_today(day_delta=0):
@@ -228,4 +230,5 @@ def create_template_for_today(file_name, day_delta=0):
         
 #####################################################################
 
+# insert_toggl_events(get_string_from_file('weekday_commute_to_work.json'))
 sync_toggl_to_google_calendar()
