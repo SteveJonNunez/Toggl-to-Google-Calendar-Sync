@@ -1,0 +1,3 @@
+[submodule "toggl_templates"]
+	path = toggl_templates
+	url = https://github.com/SteveJonNunez/toggl_templates.git
