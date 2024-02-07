@@ -1,5 +1,6 @@
 google_calendar_service_account_file.json
 /.env
-/templates
+/toggl_templates
 /.venv
 /.myenv
+.gitmodules
